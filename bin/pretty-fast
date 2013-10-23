@@ -1,0 +1,82 @@
+#!/usr/bin/env node
+/* -*- Mode: javascript; -*- */
+
+var fs = require("fs");
+var path = require("path");
+var prettyFast = require("pretty-fast");
+
+var argv = require('optimist')
+  .usage("Pretty print a JavaScript file and generate a source map.\n\nUsage:\n\n\t$0 [options] file")
+  .options("o", {
+    alias: "out",
+    describe: "Output file. Defaults to stdout.",
+    default: "-",
+  })
+  .options("m", {
+    alias: "map",
+    describe: "Source map output file.",
+    default: null,
+  })
+  .options("i", {
+    alias: "indent",
+    describe: "The indentation string.",
+    default: "  "
+  })
+  .options("t", {
+    alias: "time",
+    describe: "Just time how long it takes to pretty print the input file.",
+    default: false
+  })
+  .check(function (argv) {
+    return argv._.length === 1;
+  })
+  .argv;
+
+function main() {
+  var inputFile = argv._[0];
+  fs.readFile(inputFile, function (err, data) {
+    if (err) {
+      throw err;
+    }
+
+    var start = Date.now();
+    var result = prettyFast(data, {
+      url: inputFile,
+      indent: argv.indent
+    });
+
+    if (argv.time) {
+      console.log(Date.now() - start);
+    } else {
+      writeOut(argv.out, argv.map, result.code);
+      writeMap(argv.map, result.map);
+    }
+  });
+}
+
+function writeOut(file, mapFile, code) {
+  if (mapFile) {
+    code += "\n//# sourceMappingURL=" + path.relative(path.dirname(file),
+                                                      mapFile);
+  }
+
+  if (file == "-") {
+    console.log(code);
+  } else {
+    fs.writeFile(file, code, ifErrorThrow);
+  }
+}
+
+function writeMap(file, map) {
+  if (file) {
+    fs.writeFile(file, map.toString(), ifErrorThrow);
+  }
+}
+
+function ifErrorThrow(err) {
+  if (err) {
+    throw err;
+  }
+}
+
+main();

@@ -1,0 +1,20 @@
+{
+  "name": "pretty-fast",
+  "version": "0.0.0",
+  "description": "A fast JavaScript pretty printer.",
+  "main": "pretty-fast.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "bin": {
+    "pretty-fast": "./bin/pretty-fast"
+  },
+  "repository": "",
+  "author": "Nick Fitzgerald <fitzgen@gmail.com>",
+  "license": "BSD",
+  "dependencies": {
+    "source-map": "~0.1.30",
+    "acorn": "~0.4.2",
+    "optimist": "~0.6.0"
+  }
+}
