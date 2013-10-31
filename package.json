@@ -2,6 +2,13 @@
   "name": "pretty-fast",
   "version": "0.0.0",
   "description": "A fast JavaScript pretty printer.",
+  "author": "Nick Fitzgerald <fitzgen@gmail.com>",
+  "homepage": "https://github.com/mozilla/pretty-fast",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mozilla/pretty-fast.git"
+  },
+  "license": "BSD",
   "main": "pretty-fast.js",
   "scripts": {
     "test": "node test.js"
@@ -10,8 +17,6 @@
     "pretty-fast": "./bin/pretty-fast"
   },
   "repository": "",
-  "author": "Nick Fitzgerald <fitzgen@gmail.com>",
-  "license": "BSD",
   "dependencies": {
     "source-map": "~0.1.30",
     "acorn": "~0.4.2",
