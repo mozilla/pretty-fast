@@ -1,6 +1,4 @@
-if (typeof prettyFast == "undefined") {
-  var prettyFast = require("./pretty-fast");
-}
+var prettyFast = this.prettyFast || require("./pretty-fast");
 
 var testCases = [
   {
@@ -268,6 +266,12 @@ var testCases = [
   },
 
   {
+    name: "If/else without curlies",
+    input: "if(c) a else b",
+    output: "if (c) a else b\n"
+  },
+
+  {
     name: "Objects",
     input: "var o={a:1,\n" +
            "       b:2};",
@@ -373,9 +377,55 @@ var testCases = [
             "}\n",
   },
 
+  {
+    name: "ASI return",
+    input: "function f() {\n" +
+           "  return\n" +
+           "  {}\n" +
+           "}\n",
+    output: "function f() {\n" +
+            "  return\n" +
+            "  {\n" +
+            "  }\n" +
+            "}\n",
+  },
+
+  {
+    name: "Non-ASI property access",
+    input: "[1,2,3]\n" +
+           "[0]",
+    output: "[\n" +
+            "  1,\n" +
+            "  2,\n" +
+            "  3\n" +
+            "]\n" +
+            "[0]\n"
+  },
+
+  {
+    name: "Non-ASI in",
+    input: "'x'\n" +
+           "in foo",
+    output: "'x' in foo\n"
+  },
+
+  {
+    name: "Non-ASI function call",
+    input: "f\n" +
+           "()",
+    output: "f()\n"
+  },
+
+  {
+    name: "Non-ASI new",
+    input: "new\n" +
+           "F()",
+    output: "new F()\n"
+  },
+
 ];
 
-var sourceMap = require("source-map");
+var sourceMap = this.sourceMap || require("source-map");
 
 function runPrettyFastTests() {
   testCases.forEach(function (test) {

@@ -91,7 +91,7 @@
 
   // If any of these tokens are followed by a token on a new line, we know that
   // ASI cannot happen.
-  var PREVENT_ASI_TOKENS = {
+  var PREVENT_ASI_AFTER_TOKENS = {
     // Binary operators
     "*": true,
     "/": true,
@@ -141,6 +141,49 @@
     "(": true
   };
 
+  // If any of these tokens are on a line after the token before it, we know
+  // that ASI cannot happen.
+  var PREVENT_ASI_BEFORE_TOKENS = {
+    // Binary operators
+    "*": true,
+    "/": true,
+    "%": true,
+    "<<": true,
+    ">>": true,
+    ">>>": true,
+    "<": true,
+    ">": true,
+    "<=": true,
+    ">=": true,
+    "instanceof": true,
+    "in": true,
+    "==": true,
+    "!=": true,
+    "===": true,
+    "!==": true,
+    "&": true,
+    "^": true,
+    "|": true,
+    "&&": true,
+    "||": true,
+    ",": true,
+    ".": true,
+    "=": true,
+    "*=": true,
+    "/=": true,
+    "%=": true,
+    "+=": true,
+    "-=": true,
+    "<<=": true,
+    ">>=": true,
+    ">>>=": true,
+    "&=": true,
+    "^=": true,
+    "|=": true,
+    // Function calls
+    "(": true
+  };
+
   /**
    * Determines if Automatic Semicolon Insertion (ASI) occurs between these
    * tokens.
@@ -160,7 +203,13 @@
     if (token.startLoc.line === lastToken.startLoc.line) {
       return false;
     }
-    return !PREVENT_ASI_TOKENS[lastToken.type.type];
+    if (PREVENT_ASI_AFTER_TOKENS[lastToken.type.type || lastToken.type.keyword]) {
+      return false;
+    }
+    if (PREVENT_ASI_BEFORE_TOKENS[token.type.type || token.type.keyword]) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -201,7 +250,7 @@
    *          Returns true if we added a newline to result, false in all other
    *          cases.
    */
-  function appendWhiteSpace(token, write, stack) {
+  function appendNewline(token, write, stack) {
     if (isLineDelimiter(token, stack)) {
       write("\n", token.startLoc.line, token.startLoc.column);
       return true;
@@ -257,7 +306,10 @@
         return true;
       }
 
-      if (lastToken.type.type == ")" && token.type.type == "{") {
+      if (ltt == ")" && (token.type.type != ")"
+                         && token.type.type != "]"
+                         && token.type.type != ";"
+                         && token.type.type != ",")) {
         return true;
       }
     }
@@ -334,6 +386,12 @@
             lastToken.startLoc.column);
     }
 
+    if (lastToken && lastToken.type.type != "}" && ttk == "else") {
+      write(" ",
+            lastToken.startLoc.line,
+            lastToken.startLoc.column);
+    }
+
     function ensureNewline() {
       if (!newlineAdded) {
         write("\n",
@@ -381,8 +439,12 @@
    */
   function repeat(str, n) {
     var result = "";
-    for (var i = 0; i < n; i++) {
-      result += str;
+    while (n > 0) {
+      if (n & 1) {
+        result += str;
+      }
+      n >>= 1;
+      str += str;
     }
     return result;
   }
@@ -489,7 +551,7 @@
       write(text
             .split(new RegExp("/\n" + indentString + "/", "g"))
             .join("\n" + indentString));
-      write("*/")
+      write("*/");
     } else {
       write("//");
       write(text);
@@ -523,10 +585,10 @@
     /**
      * Write a pretty printed string to the result SourceNode.
      *
-     * We buffer our writes so that we only create on mapping for each line in
+     * We buffer our writes so that we only create one mapping for each line in
      * the source map. This enhances performance by avoiding extraneous mapping
      * serialization, and flattening the tree that
-     * SourceNode#toStringWithSourceMap will have to recursively walk. When
+     * `SourceNode#toStringWithSourceMap` will have to recursively walk. When
      * timing how long it takes to pretty print jQuery, this optimization
      * brought the time down from ~390 ms to ~190ms!
      *
@@ -666,7 +728,7 @@
       prependWhiteSpace(token, lastToken, addedNewline, write, options,
                         indentLevel, stack);
       addToken(token, write, options);
-      addedNewline = appendWhiteSpace(token, write, stack);
+      addedNewline = appendNewline(token, write, stack);
 
       if (shouldStackPop(token, stack)) {
         stack.pop();
@@ -681,32 +743,17 @@
       // object the same way that acorn reuses the token object. This allows us
       // to avoid allocations and minimize GC pauses.
       if (!lastToken) {
-        lastToken = {
-          start: token.start,
-          end: token.end,
-          startLoc: {
-            line: token.startLoc.line,
-            column: token.startLoc.column
-          },
-          endLoc: {
-            line: token.endLoc.line,
-            column: token.endLoc.column
-          },
-          type: token.type,
-          value: token.value,
-          isArrayLiteral: token.isArrayLiteral
-        };
-      } else {
-        lastToken.start = token.start;
-        lastToken.end = token.end;
-        lastToken.startLoc.line = token.startLoc.line;
-        lastToken.startLoc.column = token.startLoc.column;
-        lastToken.endLoc.line = token.endLoc.line;
-        lastToken.endLoc.column = token.endLoc.column;
-        lastToken.type = token.type;
-        lastToken.value = token.value;
-        lastToken.isArrayLiteral = token.isArrayLiteral;
+        lastToken = { startLoc: {}, endLoc: {} };
       }
+      lastToken.start = token.start;
+      lastToken.end = token.end;
+      lastToken.startLoc.line = token.startLoc.line;
+      lastToken.startLoc.column = token.startLoc.column;
+      lastToken.endLoc.line = token.endLoc.line;
+      lastToken.endLoc.column = token.endLoc.column;
+      lastToken.type = token.type;
+      lastToken.value = token.value;
+      lastToken.isArrayLiteral = token.isArrayLiteral;
 
       // Apply all the comments that have been queued up.
       if (commentQueue.length) {
