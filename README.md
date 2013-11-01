@@ -3,6 +3,8 @@
 Pretty Fast is a source-map-generating JavaScript pretty printer, that is pretty
 fast.
 
+[![Build Status](https://travis-ci.org/mozilla/pretty-fast.png?branch=master)](https://travis-ci.org/mozilla/pretty-fast)
+
 ## Install
 
     npm install pretty-fast
