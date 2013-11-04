@@ -1,3 +1,8 @@
+/*
+ * Copyright 2013 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE.md or:
+ * http://opensource.org/licenses/BSD-2-Clause
+ */
 var prettyFast = this.prettyFast || require("./pretty-fast");
 
 var testCases = [
