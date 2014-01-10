@@ -42,6 +42,10 @@ instances, and source maps in general.)
 * `indent` - The string that you want your code indented by. Most people want
   one of `"  "`, `"    "`, or `"\t"`.
 
+## Issues
+
+[Please use Bugzilla](https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Developer%20Tools%3A%20Debugger)
+
 ## Goals
 
 * To be pretty fast, while still generating source maps.
