@@ -1,6 +1,6 @@
 {
   "name": "pretty-fast",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A fast JavaScript pretty printer.",
   "author": "Nick Fitzgerald <fitzgen@gmail.com>",
   "homepage": "https://github.com/mozilla/pretty-fast",
