@@ -449,7 +449,7 @@ var testCases = [
 
 var sourceMap = this.sourceMap || require("source-map");
 
-function runPrettyFastTests() {
+function run_test() {
   testCases.forEach(function (test) {
     console.log(test.name);
 
@@ -481,7 +481,8 @@ function runPrettyFastTests() {
 
 // Only run the tests if this is node and we are running this file
 // directly. (Firefox's test runner will import this test file, and then call
-// runPrettyFastTests itself.)
-if (typeof exports == "object") {
-  runPrettyFastTests();
+// run_test itself.)
+if (typeof require == "function" && typeof module == "object"
+    && require.main === module) {
+  run_test();
 }
