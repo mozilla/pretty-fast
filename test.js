@@ -6,6 +6,7 @@
 var prettyFast = this.prettyFast || require("./pretty-fast");
 
 var testCases = [
+
   {
     name: "Simple function",
     input: "function foo() { bar(); }",
@@ -429,6 +430,19 @@ var testCases = [
     input: "new\n" +
            "F()",
     output: "new F()\n"
+  },
+
+  {
+    name: "Getter and setter literals",
+    input: "var obj={get foo(){return this._foo},set foo(v){this._foo=v}}",
+    output: "var obj = {\n" +
+            "  get foo() {\n" +
+            "    return this._foo\n" +
+            "  },\n" +
+            "  set foo(v) {\n" +
+            "    this._foo = v\n" +
+            "  }\n" +
+            "}\n"
   },
 
 ];
