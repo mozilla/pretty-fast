@@ -1,3 +1,4 @@
+/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2; fill-column: 80 -*- */
 /*
  * Copyright 2013 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.md or:
@@ -324,7 +325,7 @@
 
       var ltk = lastToken.type.keyword;
       if (ltk != null) {
-        if (ltk == "break" || ltk == "continue") {
+        if (ltk == "break" || ltk == "continue" || ltk == "return") {
           return token.type.type != ";";
         }
         if (ltk != "debugger"
@@ -558,6 +559,7 @@
       || ttt == "["
       || ttt == "?"
       || ttk == "do"
+      || ttk == "switch"
       || ttk == "case"
       || ttk == "default";
   }
@@ -590,7 +592,9 @@
    * level.
    */
   function incrementsIndent(token) {
-    return token.type.type == "{" || token.isArrayLiteral;
+    return token.type.type == "{"
+      || token.isArrayLiteral
+      || token.type.keyword == "switch";
   }
 
   /**
@@ -725,6 +729,7 @@
     //   - "[\n"
     //   - "do"
     //   - "?"
+    //   - "switch"
     //   - "case"
     //   - "default"
     //
@@ -792,6 +797,11 @@
 
       if (decrementsIndent(ttt, stack)) {
         indentLevel--;
+        if (ttt == "}"
+            && stack.length > 1
+            && stack[stack.length - 2] == "switch") {
+          indentLevel--;
+        }
       }
 
       prependWhiteSpace(token, lastToken, addedNewline, write, options,
@@ -801,6 +811,10 @@
 
       if (shouldStackPop(token, stack)) {
         stack.pop();
+        if (token == "}" && stack.length
+            && stack[stack.length - 1] == "switch") {
+          stack.pop();
+        }
       }
 
       if (incrementsIndent(token)) {
