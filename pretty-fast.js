@@ -762,7 +762,8 @@
             block: block,
             text: text,
             line: startLoc.line,
-            column: startLoc.column
+            column: startLoc.column,
+            trailing: lastToken.endLoc.line == startLoc.line
           });
         } else {
           addComment(write, indentLevel, options, block, text, startLoc.line,
@@ -807,7 +808,9 @@
       prependWhiteSpace(token, lastToken, addedNewline, write, options,
                         indentLevel, stack);
       addToken(token, write, options);
-      addedNewline = appendNewline(token, write, stack);
+      if (commentQueue.length == 0 || !commentQueue[0].trailing) {
+        addedNewline = appendNewline(token, write, stack);
+      }
 
       if (shouldStackPop(token, stack)) {
         stack.pop();
@@ -840,13 +843,17 @@
 
       // Apply all the comments that have been queued up.
       if (commentQueue.length) {
-        if (!addedNewline) {
+        if (!addedNewline && !commentQueue[0].trailing) {
           write("\n");
+        }
+        if (commentQueue[0].trailing) {
+          write(" ");
         }
         for (var i = 0, n = commentQueue.length; i < n; i++) {
           var comment = commentQueue[i];
-          addComment(write, indentLevel, options, comment.block, comment.text,
-                     comment.line, comment.column);
+          var commentIndentLevel = commentQueue[i].trailing ? 0 : indentLevel;
+          addComment(write, commentIndentLevel, options, comment.block,
+                     comment.text, comment.line, comment.column);
         }
         addedNewline = true;
         commentQueue.splice(0, commentQueue.length);

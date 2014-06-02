@@ -1,3 +1,7 @@
+/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2; fill-column: 80 -*- */
+
+"use strict";
+
 /*
  * Copyright 2013 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.md or:
@@ -491,6 +495,32 @@ var testCases = [
             "2,\n" +
             "3]).length;\n" +
             "(new Date()).toLocaleString();\n"
+  },
+
+  {
+    name: "Bug 975477 don't move end of line comments to next line",
+    input: "switch (request.action) {\n" +
+           "  case 'show': //$NON-NLS-0$\n" +
+           "    if (localStorage.hideicon !== 'true') { //$NON-NLS-0$\n" +
+           "      chrome.pageAction.show(sender.tab.id);\n" +
+           "    }\n" +
+           "    break;\n" +
+           "  default:\n" +
+           "    console.warn('unknown request'); //$NON-NLS-0$\n" +
+           "    // don't respond if you don't understand the message.\n" +
+           "    return;\n" +
+           "}\n",
+    output: "switch (request.action) {\n" +
+            "  case 'show': //$NON-NLS-0$\n" +
+            "    if (localStorage.hideicon !== 'true') { //$NON-NLS-0$\n" +
+            "      chrome.pageAction.show(sender.tab.id);\n" +
+            "    }\n" +
+            "    break;\n" +
+            "  default:\n" +
+            "    console.warn('unknown request'); //$NON-NLS-0$\n" +
+            "    // don't respond if you don't understand the message.\n" +
+            "    return;\n" +
+            "}\n"
   }
 
 ];
