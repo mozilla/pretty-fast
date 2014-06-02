@@ -481,6 +481,18 @@ var testCases = [
     output: "'\\0'\n"
   },
 
+  {
+    name: "Bug 977082 - space between grouping operator and dot notation",
+    input: "JSON.stringify(3).length;\n" +
+           "([1,2,3]).length;\n" +
+           "(new Date()).toLocaleString();\n",
+    output: "JSON.stringify(3).length;\n" +
+            "([1,\n" +
+            "2,\n" +
+            "3]).length;\n" +
+            "(new Date()).toLocaleString();\n"
+  }
+
 ];
 
 var sourceMap = this.sourceMap || require("source-map");

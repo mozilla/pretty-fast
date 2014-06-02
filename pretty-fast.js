@@ -340,7 +340,8 @@
       if (ltt == ")" && (token.type.type != ")"
                          && token.type.type != "]"
                          && token.type.type != ";"
-                         && token.type.type != ",")) {
+                         && token.type.type != ","
+                         && token.type.type != ".")) {
         return true;
       }
     }
