@@ -346,11 +346,11 @@ var testCases = [
     name: "Switch statements",
     input: "switch(x){case a:foo();break;default:bar()}",
     output: "switch (x) {\n" +
-            "case a:\n" +
-            "  foo();\n" +
-            "  break;\n" +
-            "default:\n" +
-            "  bar()\n" +
+            "  case a:\n" +
+            "    foo();\n" +
+            "    break;\n" +
+            "  default:\n" +
+            "    bar()\n" +
             "}\n"
   },
 
