@@ -92,7 +92,9 @@
     if (lastToken.type.isAssign) {
       return true;
     }
-    return !!PRE_ARRAY_LITERAL_TOKENS[lastToken.type.keyword || lastToken.type.type];
+    return !!PRE_ARRAY_LITERAL_TOKENS[
+      lastToken.type.keyword || lastToken.type.type
+    ];
   }
 
   // If any of these tokens are followed by a token on a new line, we know that
@@ -209,7 +211,9 @@
     if (token.startLoc.line === lastToken.startLoc.line) {
       return false;
     }
-    if (PREVENT_ASI_AFTER_TOKENS[lastToken.type.type || lastToken.type.keyword]) {
+    if (PREVENT_ASI_AFTER_TOKENS[
+      lastToken.type.type || lastToken.type.keyword
+    ]) {
       return false;
     }
     if (PREVENT_ASI_BEFORE_TOKENS[token.type.type || token.type.keyword]) {
@@ -490,8 +494,8 @@
   }
 
   /**
-   * Make sure that we output the escaped character combination inside string literals
-   * instead of various problematic characters.
+   * Make sure that we output the escaped character combination inside string
+   * literals instead of various problematic characters.
    */
   var sanitize = (function () {
     var escapeCharacters = {
@@ -520,11 +524,11 @@
       + ")";
     var escapeCharactersRegExp = new RegExp(regExpString, "g");
 
-    return function(str) {
+    return function (str) {
       return str.replace(escapeCharactersRegExp, function (_, c) {
         return escapeCharacters[c];
       });
-    }
+    };
   }());
   /**
    * Add the given token to the pretty printed results.
@@ -584,7 +588,7 @@
    */
   function decrementsIndent(tokenType, stack) {
     return tokenType == "}"
-      || (tokenType == "]" && stack[stack.length - 1] == "[\n")
+      || (tokenType == "]" && stack[stack.length - 1] == "[\n");
   }
 
   /**
@@ -690,12 +694,13 @@
           for (var i = 0, len = buffer.length; i < len; i++) {
             lineStr += buffer[i];
           }
-          result.add(new SourceNode(bufferLine, bufferColumn, options.url, lineStr));
+          result.add(new SourceNode(bufferLine, bufferColumn, options.url,
+                                    lineStr));
           buffer.splice(0, buffer.length);
           bufferLine = -1;
           bufferColumn = -1;
         }
-      }
+      };
     }());
 
     // Whether or not we added a newline on after we added the last token.
