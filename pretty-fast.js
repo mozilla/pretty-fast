@@ -1,13 +1,15 @@
-/* -*- Mode: js; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2; fill-column: 80 -*- */
+/* -*- indent-tabs-mode: nil; js-indent-level: 2; fill-column: 80 -*- */
 /*
  * Copyright 2013 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.md or:
  * http://opensource.org/licenses/BSD-2-Clause
  */
 (function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
+  "use strict";
+
+  if (typeof define === "function" && define.amd) {
     define(factory);
-  } else if (typeof exports === 'object') {
+  } else if (typeof exports === "object") {
     module.exports = factory();
   } else {
     root.prettyFast = factory();
@@ -778,7 +780,7 @@
       }
     });
 
-    while (true) {
+    for (;;) {
       token = getToken();
 
       ttk = token.type.keyword;

@@ -1,23 +1,20 @@
 {
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "amd": true
   },
   "globals": {
-    "describe"   : false,
-    "it"         : false,
-    // "before"     : false,
-    // "beforeEach" : false,
-    // "after"      : false,
-    // "afterEach"  : false
   },
   "rules": {
+    "camelcase": 1,
     "eqeqeq": 0,
-    "curly": 0,
-    "quotes": [ 2, "double", "avoid-escape" ],
-    "valid-jsdoc": 1,
-    "no-use-before-define": 1,
-    "no-underscore-dangle": 1,
-    "no-extend-native": 1
+    "quotes": [ 2, "double" ],
+    "valid-jsdoc": 0,
+    "no-use-before-define": 0,
+    "no-underscore-dangle": 0,
+    "no-octal-escape": 0,
+    "no-unused-vars": 0,
+    "no-comma-dangle": 0
   }
 }
