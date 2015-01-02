@@ -539,12 +539,14 @@
    *        The token to add.
    * @param Function write
    *        The function to write pretty printed code to the result SourceNode.
-   * @param Object options
-   *        The options object.
    */
-  function addToken(token, write, options) {
+  function addToken(token, write) {
     if (token.type.type == "string") {
       write("'" + sanitize(token.value) + "'",
+            token.startLoc.line,
+            token.startLoc.column);
+    } else if (token.type.type == "regexp") {
+      write(String(token.value.value),
             token.startLoc.line,
             token.startLoc.column);
     } else {
@@ -814,8 +816,8 @@
 
       prependWhiteSpace(token, lastToken, addedNewline, write, options,
                         indentLevel, stack);
-      addToken(token, write, options);
-      if (commentQueue.length == 0 || !commentQueue[0].trailing) {
+      addToken(token, write);
+      if (commentQueue.length === 0 || !commentQueue[0].trailing) {
         addedNewline = appendNewline(token, write, stack);
       }
 
