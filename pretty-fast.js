@@ -263,12 +263,12 @@
     if (token.isArrayLiteral) {
       return true;
     }
-    var ttt = token.type.label;
+    var ttl = token.type.label;
     var top = stack[stack.length - 1];
-    return ttt == ";" && top != "("
-      || ttt == "{"
-      || ttt == "," && top != "("
-      || ttt == ":" && (top == "case" || top == "default");
+    return ttl == ";" && top != "("
+      || ttl == "{"
+      || ttl == "," && top != "("
+      || ttl == ":" && (top == "case" || top == "default");
   }
 
   /**
@@ -389,7 +389,7 @@
   function prependWhiteSpace(token, lastToken, addedNewline, write, options,
                              indentLevel, stack) {
     var ttk = token.type.keyword;
-    var ttt = token.type.label;
+    var ttl = token.type.label;
     var newlineAdded = addedNewline;
     var ltt = lastToken ? lastToken.type.label : null;
 
@@ -408,11 +408,11 @@
         write(" ",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
-      } else if (ttt != "(" &&
-                 ttt != ";" &&
-                 ttt != "," &&
-                 ttt != ")" &&
-                 ttt != ".") {
+      } else if (ttl != "(" &&
+                 ttl != ";" &&
+                 ttl != "," &&
+                 ttl != ")" &&
+                 ttl != ".") {
         write("\n",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
@@ -426,7 +426,7 @@
             lastToken.loc.start.column);
     }
 
-    if (ttt == ":" && stack[stack.length - 1] == "?") {
+    if (ttl == ":" && stack[stack.length - 1] == "?") {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
@@ -451,7 +451,7 @@
       ensureNewline();
     }
 
-    if (decrementsIndent(ttt, stack)) {
+    if (decrementsIndent(ttl, stack)) {
       ensureNewline();
     }
 
@@ -560,12 +560,12 @@
    * Returns true if the given token type belongs on the stack.
    */
   function belongsOnStack(token) {
-    var ttt = token.type.label;
+    var ttl = token.type.label;
     var ttk = token.type.keyword;
-    return ttt == "{"
-      || ttt == "("
-      || ttt == "["
-      || ttt == "?"
+    return ttl == "{"
+      || ttl == "("
+      || ttl == "["
+      || ttl == "?"
       || ttk == "do"
       || ttk == "switch"
       || ttk == "case"
@@ -576,13 +576,13 @@
    * Returns true if the given token should cause us to pop the stack.
    */
   function shouldStackPop(token, stack) {
-    var ttt = token.type.label;
+    var ttl = token.type.label;
     var ttk = token.type.keyword;
     var top = stack[stack.length - 1];
-    return ttt == "]"
-      || ttt == ")"
-      || ttt == "}"
-      || (ttt == ":" && (top == "case" || top == "default" || top == "?"))
+    return ttl == "]"
+      || ttl == ")"
+      || ttl == "}"
+      || (ttl == ":" && (top == "case" || top == "default" || top == "?"))
       || (ttk == "while" && top == "do");
   }
 
@@ -715,7 +715,7 @@
 
     // Shorthand for token.type.label, so we don't have to repeatedly access
     // properties.
-    var ttt;
+    var ttl;
 
     // Shorthand for token.type.keyword, so we don't have to repeatedly access
     // properties.
@@ -798,9 +798,9 @@
       }
 
       ttk = token.type.keyword;
-      ttt = token.type.label;
+      ttl = token.type.label;
 
-      if (ttt == "eof") {
+      if (ttl == "eof") {
         if (!addedNewline) {
           write("\n");
         }
@@ -813,13 +813,13 @@
         if (token.isArrayLiteral) {
           stack.push("[\n");
         } else {
-          stack.push(ttt || ttk);
+          stack.push(ttl || ttk);
         }
       }
 
-      if (decrementsIndent(ttt, stack)) {
+      if (decrementsIndent(ttl, stack)) {
         indentLevel--;
-        if (ttt == "}"
+        if (ttl == "}"
             && stack.length > 1
             && stack[stack.length - 2] == "switch") {
           indentLevel--;
