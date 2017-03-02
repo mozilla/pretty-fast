@@ -51,7 +51,7 @@ instances, and source maps in general.)
 * To be pretty fast, while still generating source maps.
 
 * To avoid fully parsing the source text; we should be able to get away with
-  only a tokenizer and some hueristics.
+  only a tokenizer and some heuristics.
 
 * Preserve comments.
 
