@@ -528,7 +528,11 @@ var testCases = [
             "    return;\n" +
             "}\n"
   },
-
+  {
+    name: "Const handling",
+    input: "const d = 'yes';\n",
+    output: "const d = 'yes';\n"
+  },
   {
     name: "Let handling without value",
     input: "let d;\n",

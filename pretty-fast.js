@@ -355,6 +355,10 @@
       if (lastToken.value == "let") {
         return true;
       }
+
+      if (lastToken.value == "const") {
+        return true;
+      }
     }
 
     if (token.type.isAssign) {
