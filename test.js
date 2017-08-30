@@ -527,8 +527,22 @@ var testCases = [
             "    // don't respond if you don't understand the message.\n" +
             "    return;\n" +
             "}\n"
+  },
+  {
+    name: "Const handling",
+    input: "const d = 'yes';\n",
+    output: "const d = 'yes';\n"
+  },
+  {
+    name: "Let handling without value",
+    input: "let d;\n",
+    output: "let d;\n"
+  },
+  {
+    name: "Let handling with value",
+    input: "let d = 'yes';\n",
+    output: "let d = 'yes';\n"
   }
-
 ];
 
 var sourceMap = this.sourceMap || require("source-map");
