@@ -1,6 +1,6 @@
 {
   "name": "pretty-fast",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A fast JavaScript pretty printer.",
   "author": "Nick Fitzgerald <fitzgen@gmail.com>",
   "homepage": "https://github.com/mozilla/pretty-fast",
@@ -17,12 +17,11 @@
   "bin": {
     "pretty-fast": "./bin/pretty-fast"
   },
-  "repository": "",
   "devDependencies": {
     "eslint": "0.6.2"
   },
   "dependencies": {
-    "source-map": "^0.5.6",
+    "source-map": "^0.5.7",
     "acorn": "~2.6.4",
     "optimist": "~0.6.0"
   }
