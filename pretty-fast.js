@@ -382,6 +382,10 @@
    * @param Boolean addedNewline
    *        Whether we added a newline after adding the last token to the pretty
    *        printed code.
+   * @param Boolean addedSpace
+   *        Whether we added a space after adding the last token to the pretty
+   *        printed code. This only happens if an inline comment was printed
+   *        since the last token.
    * @param Function write
    *        The function to write pretty printed code to the result SourceNode.
    * @param Object options
@@ -391,12 +395,12 @@
    * @param Array stack
    *        The stack of open curlies, brackets, etc.
    */
-  function prependWhiteSpace(token, lastToken, addedNewline, write, options,
+  function prependWhiteSpace(token, lastToken, addedNewline, addedSpace, write, options,
                              indentLevel, stack) {
     var ttk = token.type.keyword;
     var ttl = token.type.label;
     var newlineAdded = addedNewline;
-    var spaceAdded = false;
+    var spaceAdded = addedSpace;
     var ltt = lastToken ? lastToken.type.label : null;
 
     // Handle whitespace and newlines after "}" here instead of in
@@ -631,9 +635,15 @@
    *        The line number to comment appeared on.
    * @param Number column
    *        The column number the comment appeared on.
+   * @param Object nextToken
+   *        The next token if any.
+   *
+   * @returns Boolean newlineAdded
+   *        True if a newline was added.
    */
-  function addComment(write, indentLevel, options, block, text, line, column) {
+  function addComment(write, indentLevel, options, block, text, line, column, nextToken) {
     var indentString = repeat(options.indent, indentLevel);
+    var needNewline = true;
 
     write(indentString, line, column);
     if (block) {
@@ -644,11 +654,17 @@
             .join("\n" + indentString),
             null, null, true);
       write("*/");
+      needNewline = !(nextToken && nextToken.loc.start.line == line);
     } else {
       write("//");
       write(text);
     }
-    write("\n");
+    if (needNewline) {
+      write("\n");
+    } else {
+      write(" ");
+    }
+    return needNewline;
   }
 
   /**
@@ -722,6 +738,9 @@
 
     // Whether or not we added a newline on after we added the last token.
     var addedNewline = false;
+
+    // Whether or not we added a space after we added the last token.
+    var addedSpace = false;
 
     // The current token we will be adding to the pretty printed code.
     var token;
@@ -797,6 +816,7 @@
 
     for (var i = 0; i < tokenQueue.length; i++) {
       token = tokenQueue[i];
+      var nextToken = tokenQueue[i + 1];
 
       if (token.comment) {
         var commentIndentLevel = indentLevel;
@@ -804,9 +824,11 @@
           commentIndentLevel = 0;
           write(" ");
         }
-        addComment(write, commentIndentLevel, options, token.block, token.text,
-                   token.loc.start.line, token.loc.start.column);
-        addedNewline = true;
+        addedNewline = addComment(write, commentIndentLevel, options,
+                                  token.block, token.text,
+                                  token.loc.start.line, token.loc.start.column,
+                                  nextToken);
+        addedSpace = !addedNewline;
         continue;
       }
 
@@ -839,13 +861,13 @@
         }
       }
 
-      prependWhiteSpace(token, lastToken, addedNewline, write, options,
+      prependWhiteSpace(token, lastToken, addedNewline, addedSpace, write, options,
                         indentLevel, stack);
       addToken(token, write);
+      addedSpace = false;
 
       // If the next token is going to be a comment starting on the same line,
       // then no need to add one here
-      var nextToken = tokenQueue[i + 1];
       if (!nextToken || !nextToken.comment || token.loc.end.line != nextToken.loc.start.line) {
         addedNewline = appendNewline(token, write, stack);
       }

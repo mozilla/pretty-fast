@@ -582,6 +582,12 @@ var testCases = [
            "*/\n" +
            "  return;\n" +
            "}\n"
+  },
+  {
+    name: "Bug pretty-sure-6 - inline comment shouldn't move parenthesis to next line",
+    input: "return /* inline comment */ (\n" +
+           "  1+1);",
+    output: "return /* inline comment */ (1 + 1);\n"
   }
 ];
 
