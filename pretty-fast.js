@@ -638,9 +638,11 @@
     write(indentString, line, column);
     if (block) {
       write("/*");
+      // We must pass ignoreNewline in case the comment happens to be "\n".
       write(text
             .split(new RegExp("/\n" + indentString + "/", "g"))
-            .join("\n" + indentString));
+            .join("\n" + indentString),
+            null, null, true);
       write("*/");
     } else {
       write("//");
@@ -688,12 +690,14 @@
      *        The line number the string came from in the ugly source.
      * @param Number column
      *        The column number the string came from in the ugly source.
+     * @param Boolean ignoreNewline
+     *        If true, a single "\n" won't result in an additional mapping.
      */
     var write = (function () {
       var buffer = [];
       var bufferLine = -1;
       var bufferColumn = -1;
-      return function write(str, line, column) {
+      return function write(str, line, column, ignoreNewline) {
         if (line != null && bufferLine === -1) {
           bufferLine = line;
         }
@@ -702,7 +706,7 @@
         }
         buffer.push(str);
 
-        if (str == "\n") {
+        if (str == "\n" && !ignoreNewline) {
           var lineStr = "";
           for (var i = 0, len = buffer.length; i < len; i++) {
             lineStr += buffer[i];

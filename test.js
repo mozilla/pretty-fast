@@ -569,6 +569,19 @@ var testCases = [
     name: "Bug pretty-sure-4 - escaping null character before digit",
     input: "x = '\\u00001';",
     output: "x = '\\x001';\n"
+  },
+  {
+    name: "Bug pretty-sure-5 - empty multiline comment shouldn't throw exception",
+    input: "{\n" +
+           "/*\n" +
+           "*/\n" +
+           "  return;\n" +
+           "}\n",
+    output: "{\n" +
+           "  /*\n" +
+           "*/\n" +
+           "  return;\n" +
+           "}\n"
   }
 ];
 
