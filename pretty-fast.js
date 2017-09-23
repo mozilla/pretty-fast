@@ -369,7 +369,7 @@
     if (token.type.isAssign) {
       return true;
     }
-    if (token.type.binop != null) {
+    if (token.type.binop != null && lastToken) {
       return true;
     }
     if (token.type.label == "?") {

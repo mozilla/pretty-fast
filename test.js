@@ -612,6 +612,11 @@ var testCases = [
             "  yield\n" +
             "  * x\n" +
             "}\n"
+  },
+  {
+    name: "Bug pretty-sure-9 - accept unary operator at start of file",
+    input: "+ 0",
+    output: "+ 0\n"
   }
 ];
 
