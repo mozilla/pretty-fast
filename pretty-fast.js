@@ -847,7 +847,7 @@
 
       if (shouldStackPop(token, stack)) {
         stack.pop();
-        if (token == "}" && stack.length
+        if (ttl == "}" && stack.length
             && stack[stack.length - 1] == "switch") {
           stack.pop();
         }

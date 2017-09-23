@@ -542,6 +542,17 @@ var testCases = [
     name: "Let handling with value",
     input: "let d = 'yes';\n",
     output: "let d = 'yes';\n"
+  },
+  {
+    name: "Bug 1261971 - indentation after switch statement",
+    input: "{switch(x){}if(y){}done();}",
+    output: "{\n" +
+            "  switch (x) {\n" +
+            "  }\n" +
+            "  if (y) {\n" +
+            "  }\n" +
+            "  done();\n" +
+            "}\n"
   }
 ];
 
