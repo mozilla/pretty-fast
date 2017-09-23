@@ -593,6 +593,25 @@ var testCases = [
     name: "Bug pretty-sure-7 - accessing a literal number property requires a space",
     input: "0..toString()+x.toString();",
     output: "0 .toString() + x.toString();\n"
+  },
+  {
+    name: "Bug pretty-sure-8 - return and yield only accept arguments when on the same line",
+    input: "{\n" +
+           "  return\n" +
+           "  (x)\n" +
+           "  yield\n" +
+           "  (x)\n" +
+           "  yield\n" +
+           "  *x\n" +
+           "}\n",
+    output: "{\n" +
+            "  return\n" +
+            "  (x)\n" +
+            "  yield\n" +
+            "  (x)\n" +
+            "  yield\n" +
+            "  * x\n" +
+            "}\n"
   }
 ];
 

@@ -229,6 +229,11 @@
     if (token.loc.start.line === lastToken.loc.start.line) {
       return false;
     }
+    if (lastToken.type.keyword == "return"
+        || lastToken.type.keyword == "yield"
+        || (lastToken.type.label == "name" && lastToken.value == "yield")) {
+      return true;
+    }
     if (PREVENT_ASI_AFTER_TOKENS[
       lastToken.type.label || lastToken.type.keyword
     ]) {
