@@ -482,7 +482,7 @@ var testCases = [
   {
     name: "Escaping null character in strings",
     input: "'\\0'\n",
-    output: "'\\0'\n"
+    output: "'\\x00'\n"
   },
 
   {
@@ -559,6 +559,16 @@ var testCases = [
     input: "for (let tab of tabs) {}",
     output: "for (let tab of tabs) {\n" +
             "}\n"
+  },
+  {
+    name: "Bug pretty-sure-3 - escaping line and paragraph separators",
+    input: "x = '\\u2029\\u2028';",
+    output: "x = '\\u2029\\u2028';\n"
+  },
+  {
+    name: "Bug pretty-sure-4 - escaping null character before digit",
+    input: "x = '\\u00001';",
+    output: "x = '\\x001';\n"
   }
 ];
 

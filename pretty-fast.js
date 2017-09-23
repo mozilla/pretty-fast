@@ -519,7 +519,11 @@
       // Form feed
       "\f": "\\f",
       // Null character
-      "\0": "\\0",
+      "\0": "\\x00",
+      // Line separator
+      "\u2028": "\\u2028",
+      // Paragraph separator
+      "\u2029": "\\u2029",
       // Single quotes
       "'": "\\'"
     };
