@@ -320,6 +320,9 @@
       if (ltt == ";") {
         return true;
       }
+      if (ltt == "num" && token.type.label == ".") {
+        return true;
+      }
 
       var ltk = lastToken.type.keyword;
       if (ltk != null) {

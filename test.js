@@ -588,6 +588,11 @@ var testCases = [
     input: "return /* inline comment */ (\n" +
            "  1+1);",
     output: "return /* inline comment */ (1 + 1);\n"
+  },
+  {
+    name: "Bug pretty-sure-7 - accessing a literal number property requires a space",
+    input: "0..toString()+x.toString();",
+    output: "0 .toString() + x.toString();\n"
   }
 ];
 
