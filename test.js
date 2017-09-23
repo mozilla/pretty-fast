@@ -553,6 +553,12 @@ var testCases = [
             "  }\n" +
             "  done();\n" +
             "}\n"
+  },
+  {
+    name: "Bug 1206633 - spaces in for of",
+    input: "for (let tab of tabs) {}",
+    output: "for (let tab of tabs) {\n" +
+            "}\n"
   }
 ];
 

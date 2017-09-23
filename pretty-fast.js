@@ -195,6 +195,22 @@
   };
 
   /**
+   * Determine if a token can look like an identifier. More precisely,
+   * this determines if the token may end or start with a character from
+   * [A-Za-z0-9_].
+   *
+   * @param Object token
+   *        The token we are looking at.
+   *
+   * @returns Boolean
+   *          True if identifier-like.
+   */
+  function isIdentifierLike(token) {
+    var ttl = token.type.label;
+    return ttl == "name" || ttl == "num" || !!token.type.keyword;
+  }
+
+  /**
    * Determines if Automatic Semicolon Insertion (ASI) occurs between these
    * tokens.
    *
@@ -222,30 +238,6 @@
       return false;
     }
     return true;
-  }
-
-  /**
-   * Determine if we have encountered a getter or setter.
-   *
-   * @param Object token
-   *        The current token. If this is a getter or setter, it would be the
-   *        property name.
-   * @param Object lastToken
-   *        The last token we added to the pretty printed results. If this is a
-   *        getter or setter, it would be the `get` or `set` keyword
-   *        respectively.
-   * @param Array stack
-   *        The stack of open parens/curlies/brackets/etc.
-   *
-   * @returns Boolean
-   *          True if this is a getter or setter.
-   */
-  function isGetterOrSetter(token, lastToken, stack) {
-    return stack[stack.length - 1] == "{"
-      && lastToken
-      && lastToken.type.label == "name"
-      && (lastToken.value == "get" || lastToken.value == "set")
-      && token.type.label == "name";
   }
 
   /**
@@ -359,6 +351,11 @@
       if (lastToken.value == "const") {
         return true;
       }
+
+      if (isIdentifierLike(token) && isIdentifierLike(lastToken)) {
+        // We must emit a space to avoid merging the tokens.
+        return true;
+      }
     }
 
     if (token.type.isAssign) {
@@ -399,6 +396,7 @@
     var ttk = token.type.keyword;
     var ttl = token.type.label;
     var newlineAdded = addedNewline;
+    var spaceAdded = false;
     var ltt = lastToken ? lastToken.type.label : null;
 
     // Handle whitespace and newlines after "}" here instead of in
@@ -410,12 +408,14 @@
         write(" ",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
+        spaceAdded = true;
       } else if (ttk == "else" ||
                  ttk == "catch" ||
                  ttk == "finally") {
         write(" ",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
+        spaceAdded = true;
       } else if (ttl != "(" &&
                  ttl != ";" &&
                  ttl != "," &&
@@ -428,22 +428,18 @@
       }
     }
 
-    if (isGetterOrSetter(token, lastToken, stack)) {
-      write(" ",
-            lastToken.loc.start.line,
-            lastToken.loc.start.column);
-    }
-
     if (ttl == ":" && stack[stack.length - 1] == "?") {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
+      spaceAdded = true;
     }
 
     if (lastToken && ltt != "}" && ttk == "else") {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
+      spaceAdded = true;
     }
 
     function ensureNewline() {
@@ -473,10 +469,11 @@
               token.loc.start.line,
               token.loc.start.column);
       }
-    } else if (needsSpaceAfter(token, lastToken)) {
+    } else if (!spaceAdded && needsSpaceAfter(token, lastToken)) {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
+      spaceAdded = true;
     }
   }
 
