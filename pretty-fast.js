@@ -248,6 +248,10 @@
       && token.type.label == "name";
   }
 
+  function isExtends(token, stack) {
+    return token && token.value == "extends";
+  }
+
   /**
    * Determine if we should add a newline after the given token.
    *
@@ -359,6 +363,18 @@
       if (lastToken.value == "const") {
         return true;
       }
+
+      if (lastToken.value == "class") {
+        return true;
+      }
+
+      if (lastToken.value == "extends") {
+        return true;
+      }
+
+      if (token.type.label == "{" && lastToken.type.label == "name") {
+        return true;
+      }
     }
 
     if (token.type.isAssign) {
@@ -429,6 +445,12 @@
     }
 
     if (isGetterOrSetter(token, lastToken, stack)) {
+      write(" ",
+            lastToken.loc.start.line,
+            lastToken.loc.start.column);
+    }
+
+    if (isExtends(token, stack)) {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
