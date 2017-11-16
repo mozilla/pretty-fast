@@ -512,7 +512,7 @@ var testCases = [
            "    console.warn('unknown request'); //$NON-NLS-0$\n" +
            "    // don't respond if you don't understand the message.\n" +
            "    return;\n" +
-           "}\n",
+           "}\n" ,
     output: "switch (request.action) {\n" +
             "  case 'show': //$NON-NLS-0$\n" +
             "    if (localStorage.hideicon !== 'true') { //$NON-NLS-0$\n" +
@@ -542,6 +542,15 @@ var testCases = [
     name: "Let handling with value",
     input: "let d = 'yes';\n",
     output: "let d = 'yes';\n"
+  },
+  {
+    name: "Template literals",
+    input: "\`${JSON.stringify({class: 'testing'})}\`",
+    output: "\`${JSON.stringify({\n" +
+            "  class : 'testing'\n" +
+    "})\n" +
+    "}\n" +
+    "\`\n"
   }
 ];
 
