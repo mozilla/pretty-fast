@@ -851,6 +851,11 @@
       }
 
       ttk = token.type.keyword;
+
+      if (ttk && lastToken && lastToken.type.label == ".") {
+        token.type = acorn.tokTypes.name;
+      }
+
       ttl = token.type.label;
 
       if (ttl == "eof") {
