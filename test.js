@@ -551,6 +551,49 @@ var testCases = [
     "})\n" +
     "}\n" +
     "\`\n"
+  },
+
+  {
+    name: "Class handling",
+    input: "class  Class{constructor(){}}",
+    output: "class Class {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Subclass handling",
+    input: "class  Class  extends  Base{constructor(){}}",
+    output: "class Class extends Base {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Unnamed class handling",
+    input: "let unnamed=class{constructor(){}}",
+    output: "let unnamed = class {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Named class handling",
+    input: "let unnamed=class Class{constructor(){}}",
+    output: "let unnamed = class Class {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Class extension within a function",
+    input: "(function() {  class X extends Y { constructor() {} }  })()",
+    output: "(function () {\n" +
+            "  class X extends Y {\n" +
+            "    constructor() {\n" +
+            "    }\n" +
+            "  }\n" +
+            "}) ()\n"
   }
 ];
 
