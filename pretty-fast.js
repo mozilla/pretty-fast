@@ -364,6 +364,10 @@
         // We must emit a space to avoid merging the tokens.
         return true;
       }
+
+      if (token.type.label == "{" && lastToken.type.label == "name") {
+        return true;
+      }
     }
 
     if (token.type.isAssign) {

@@ -512,7 +512,7 @@ var testCases = [
            "    console.warn('unknown request'); //$NON-NLS-0$\n" +
            "    // don't respond if you don't understand the message.\n" +
            "    return;\n" +
-           "}\n",
+           "}\n" ,
     output: "switch (request.action) {\n" +
             "  case 'show': //$NON-NLS-0$\n" +
             "    if (localStorage.hideicon !== 'true') { //$NON-NLS-0$\n" +
@@ -542,6 +542,58 @@ var testCases = [
     name: "Let handling with value",
     input: "let d = 'yes';\n",
     output: "let d = 'yes';\n"
+  },
+  {
+    name: "Template literals",
+    input: "\`${JSON.stringify({class: 'testing'})}\`",
+    output: "\`${JSON.stringify({\n" +
+            "  class : 'testing'\n" +
+    "})\n" +
+    "}\n" +
+    "\`\n"
+  },
+
+  {
+    name: "Class handling",
+    input: "class  Class{constructor(){}}",
+    output: "class Class {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Subclass handling",
+    input: "class  Class  extends  Base{constructor(){}}",
+    output: "class Class extends Base {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Unnamed class handling",
+    input: "let unnamed=class{constructor(){}}",
+    output: "let unnamed = class {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Named class handling",
+    input: "let unnamed=class Class{constructor(){}}",
+    output: "let unnamed = class Class {\n" +
+            "  constructor() {\n" +
+            "  }\n" +
+            "}\n"
+  },
+  {
+    name: "Class extension within a function",
+    input: "(function() {  class X extends Y { constructor() {} }  })()",
+    output: "(function () {\n" +
+            "  class X extends Y {\n" +
+            "    constructor() {\n" +
+            "    }\n" +
+            "  }\n" +
+            "}) ()\n"
   },
   {
     name: "Bug 1261971 - indentation after switch statement",
