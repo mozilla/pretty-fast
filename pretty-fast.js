@@ -195,6 +195,22 @@
   };
 
   /**
+   * Determine if a token can look like an identifier. More precisely,
+   * this determines if the token may end or start with a character from
+   * [A-Za-z0-9_].
+   *
+   * @param Object token
+   *        The token we are looking at.
+   *
+   * @returns Boolean
+   *          True if identifier-like.
+   */
+  function isIdentifierLike(token) {
+    var ttl = token.type.label;
+    return ttl == "name" || ttl == "num" || !!token.type.keyword;
+  }
+
+  /**
    * Determines if Automatic Semicolon Insertion (ASI) occurs between these
    * tokens.
    *
@@ -213,6 +229,11 @@
     if (token.loc.start.line === lastToken.loc.start.line) {
       return false;
     }
+    if (lastToken.type.keyword == "return"
+        || lastToken.type.keyword == "yield"
+        || (lastToken.type.label == "name" && lastToken.value == "yield")) {
+      return true;
+    }
     if (PREVENT_ASI_AFTER_TOKENS[
       lastToken.type.label || lastToken.type.keyword
     ]) {
@@ -222,34 +243,6 @@
       return false;
     }
     return true;
-  }
-
-  /**
-   * Determine if we have encountered a getter or setter.
-   *
-   * @param Object token
-   *        The current token. If this is a getter or setter, it would be the
-   *        property name.
-   * @param Object lastToken
-   *        The last token we added to the pretty printed results. If this is a
-   *        getter or setter, it would be the `get` or `set` keyword
-   *        respectively.
-   * @param Array stack
-   *        The stack of open parens/curlies/brackets/etc.
-   *
-   * @returns Boolean
-   *          True if this is a getter or setter.
-   */
-  function isGetterOrSetter(token, lastToken, stack) {
-    return stack[stack.length - 1] == "{"
-      && lastToken
-      && lastToken.type.label == "name"
-      && (lastToken.value == "get" || lastToken.value == "set")
-      && token.type.label == "name";
-  }
-
-  function isExtends(token, stack) {
-    return token && token.value == "extends";
   }
 
   /**
@@ -332,6 +325,9 @@
       if (ltt == ";") {
         return true;
       }
+      if (ltt == "num" && token.type.label == ".") {
+        return true;
+      }
 
       var ltk = lastToken.type.keyword;
       if (ltk != null) {
@@ -364,11 +360,8 @@
         return true;
       }
 
-      if (lastToken.value == "class") {
-        return true;
-      }
-
-      if (lastToken.value == "extends") {
+      if (isIdentifierLike(token) && isIdentifierLike(lastToken)) {
+        // We must emit a space to avoid merging the tokens.
         return true;
       }
 
@@ -380,7 +373,7 @@
     if (token.type.isAssign) {
       return true;
     }
-    if (token.type.binop != null) {
+    if (token.type.binop != null && lastToken) {
       return true;
     }
     if (token.type.label == "?") {
@@ -401,6 +394,10 @@
    * @param Boolean addedNewline
    *        Whether we added a newline after adding the last token to the pretty
    *        printed code.
+   * @param Boolean addedSpace
+   *        Whether we added a space after adding the last token to the pretty
+   *        printed code. This only happens if an inline comment was printed
+   *        since the last token.
    * @param Function write
    *        The function to write pretty printed code to the result SourceNode.
    * @param Object options
@@ -410,11 +407,12 @@
    * @param Array stack
    *        The stack of open curlies, brackets, etc.
    */
-  function prependWhiteSpace(token, lastToken, addedNewline, write, options,
+  function prependWhiteSpace(token, lastToken, addedNewline, addedSpace, write, options,
                              indentLevel, stack) {
     var ttk = token.type.keyword;
     var ttl = token.type.label;
     var newlineAdded = addedNewline;
+    var spaceAdded = addedSpace;
     var ltt = lastToken ? lastToken.type.label : null;
 
     // Handle whitespace and newlines after "}" here instead of in
@@ -426,12 +424,14 @@
         write(" ",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
+        spaceAdded = true;
       } else if (ttk == "else" ||
                  ttk == "catch" ||
                  ttk == "finally") {
         write(" ",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
+        spaceAdded = true;
       } else if (ttl != "(" &&
                  ttl != ";" &&
                  ttl != "," &&
@@ -444,28 +444,18 @@
       }
     }
 
-    if (isGetterOrSetter(token, lastToken, stack)) {
-      write(" ",
-            lastToken.loc.start.line,
-            lastToken.loc.start.column);
-    }
-
-    if (isExtends(token, stack)) {
-      write(" ",
-            lastToken.loc.start.line,
-            lastToken.loc.start.column);
-    }
-
     if (ttl == ":" && stack[stack.length - 1] == "?") {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
+      spaceAdded = true;
     }
 
     if (lastToken && ltt != "}" && ttk == "else") {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
+      spaceAdded = true;
     }
 
     function ensureNewline() {
@@ -495,10 +485,11 @@
               token.loc.start.line,
               token.loc.start.column);
       }
-    } else if (needsSpaceAfter(token, lastToken)) {
+    } else if (!spaceAdded && needsSpaceAfter(token, lastToken)) {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
+      spaceAdded = true;
     }
   }
 
@@ -544,7 +535,11 @@
       // Form feed
       "\f": "\\f",
       // Null character
-      "\0": "\\0",
+      "\0": "\\x00",
+      // Line separator
+      "\u2028": "\\u2028",
+      // Paragraph separator
+      "\u2029": "\\u2029",
       // Single quotes
       "'": "\\'"
     };
@@ -652,22 +647,36 @@
    *        The line number to comment appeared on.
    * @param Number column
    *        The column number the comment appeared on.
+   * @param Object nextToken
+   *        The next token if any.
+   *
+   * @returns Boolean newlineAdded
+   *        True if a newline was added.
    */
-  function addComment(write, indentLevel, options, block, text, line, column) {
+  function addComment(write, indentLevel, options, block, text, line, column, nextToken) {
     var indentString = repeat(options.indent, indentLevel);
+    var needNewline = true;
 
     write(indentString, line, column);
     if (block) {
       write("/*");
+      // We must pass ignoreNewline in case the comment happens to be "\n".
       write(text
             .split(new RegExp("/\n" + indentString + "/", "g"))
-            .join("\n" + indentString));
+            .join("\n" + indentString),
+            null, null, true);
       write("*/");
+      needNewline = !(nextToken && nextToken.loc.start.line == line);
     } else {
       write("//");
       write(text);
     }
-    write("\n");
+    if (needNewline) {
+      write("\n");
+    } else {
+      write(" ");
+    }
+    return needNewline;
   }
 
   /**
@@ -709,12 +718,14 @@
      *        The line number the string came from in the ugly source.
      * @param Number column
      *        The column number the string came from in the ugly source.
+     * @param Boolean ignoreNewline
+     *        If true, a single "\n" won't result in an additional mapping.
      */
     var write = (function () {
       var buffer = [];
       var bufferLine = -1;
       var bufferColumn = -1;
-      return function write(str, line, column) {
+      return function write(str, line, column, ignoreNewline) {
         if (line != null && bufferLine === -1) {
           bufferLine = line;
         }
@@ -723,7 +734,7 @@
         }
         buffer.push(str);
 
-        if (str == "\n") {
+        if (str == "\n" && !ignoreNewline) {
           var lineStr = "";
           for (var i = 0, len = buffer.length; i < len; i++) {
             lineStr += buffer[i];
@@ -739,6 +750,9 @@
 
     // Whether or not we added a newline on after we added the last token.
     var addedNewline = false;
+
+    // Whether or not we added a space after we added the last token.
+    var addedSpace = false;
 
     // The current token we will be adding to the pretty printed code.
     var token;
@@ -814,6 +828,7 @@
 
     for (var i = 0; i < tokenQueue.length; i++) {
       token = tokenQueue[i];
+      var nextToken = tokenQueue[i + 1];
 
       if (token.comment) {
         var commentIndentLevel = indentLevel;
@@ -821,9 +836,11 @@
           commentIndentLevel = 0;
           write(" ");
         }
-        addComment(write, commentIndentLevel, options, token.block, token.text,
-                   token.loc.start.line, token.loc.start.column);
-        addedNewline = true;
+        addedNewline = addComment(write, commentIndentLevel, options,
+                                  token.block, token.text,
+                                  token.loc.start.line, token.loc.start.column,
+                                  nextToken);
+        addedSpace = !addedNewline;
         continue;
       }
 
@@ -856,20 +873,20 @@
         }
       }
 
-      prependWhiteSpace(token, lastToken, addedNewline, write, options,
+      prependWhiteSpace(token, lastToken, addedNewline, addedSpace, write, options,
                         indentLevel, stack);
       addToken(token, write);
+      addedSpace = false;
 
       // If the next token is going to be a comment starting on the same line,
       // then no need to add one here
-      var nextToken = tokenQueue[i + 1];
       if (!nextToken || !nextToken.comment || token.loc.end.line != nextToken.loc.start.line) {
         addedNewline = appendNewline(token, write, stack);
       }
 
       if (shouldStackPop(token, stack)) {
         stack.pop();
-        if (token == "}" && stack.length
+        if (ttl == "}" && stack.length
             && stack[stack.length - 1] == "switch") {
           stack.pop();
         }

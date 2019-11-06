@@ -482,7 +482,7 @@ var testCases = [
   {
     name: "Escaping null character in strings",
     input: "'\\0'\n",
-    output: "'\\0'\n"
+    output: "'\\x00'\n"
   },
 
   {
@@ -594,6 +594,81 @@ var testCases = [
             "    }\n" +
             "  }\n" +
             "}) ()\n"
+  },
+  {
+    name: "Bug 1261971 - indentation after switch statement",
+    input: "{switch(x){}if(y){}done();}",
+    output: "{\n" +
+            "  switch (x) {\n" +
+            "  }\n" +
+            "  if (y) {\n" +
+            "  }\n" +
+            "  done();\n" +
+            "}\n"
+  },
+  {
+    name: "Bug 1206633 - spaces in for of",
+    input: "for (let tab of tabs) {}",
+    output: "for (let tab of tabs) {\n" +
+            "}\n"
+  },
+  {
+    name: "Bug pretty-sure-3 - escaping line and paragraph separators",
+    input: "x = '\\u2029\\u2028';",
+    output: "x = '\\u2029\\u2028';\n"
+  },
+  {
+    name: "Bug pretty-sure-4 - escaping null character before digit",
+    input: "x = '\\u00001';",
+    output: "x = '\\x001';\n"
+  },
+  {
+    name: "Bug pretty-sure-5 - empty multiline comment shouldn't throw exception",
+    input: "{\n" +
+           "/*\n" +
+           "*/\n" +
+           "  return;\n" +
+           "}\n",
+    output: "{\n" +
+           "  /*\n" +
+           "*/\n" +
+           "  return;\n" +
+           "}\n"
+  },
+  {
+    name: "Bug pretty-sure-6 - inline comment shouldn't move parenthesis to next line",
+    input: "return /* inline comment */ (\n" +
+           "  1+1);",
+    output: "return /* inline comment */ (1 + 1);\n"
+  },
+  {
+    name: "Bug pretty-sure-7 - accessing a literal number property requires a space",
+    input: "0..toString()+x.toString();",
+    output: "0 .toString() + x.toString();\n"
+  },
+  {
+    name: "Bug pretty-sure-8 - return and yield only accept arguments when on the same line",
+    input: "{\n" +
+           "  return\n" +
+           "  (x)\n" +
+           "  yield\n" +
+           "  (x)\n" +
+           "  yield\n" +
+           "  *x\n" +
+           "}\n",
+    output: "{\n" +
+            "  return\n" +
+            "  (x)\n" +
+            "  yield\n" +
+            "  (x)\n" +
+            "  yield\n" +
+            "  * x\n" +
+            "}\n"
+  },
+  {
+    name: "Bug pretty-sure-9 - accept unary operator at start of file",
+    input: "+ 0",
+    output: "+ 0\n"
   }
 ];
 
