@@ -11,7 +11,7 @@
   "license": "BSD",
   "main": "pretty-fast.js",
   "scripts": {
-    "eslint": "eslint -f compact *.js",
+    "eslint": "eslint -f compact pretty-fast.js",
     "test": "npm run eslint && node test.js"
   },
   "bin": {

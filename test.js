@@ -545,12 +545,14 @@ var testCases = [
   },
   {
     name: "Template literals",
-    input: "\`${JSON.stringify({class: 'testing'})}\`",
-    output: "\`${JSON.stringify({\n" +
-            "  class : 'testing'\n" +
-    "})\n" +
-    "}\n" +
-    "\`\n"
+    // issue in acorn
+    input: "\`abc${JSON.stringify({clas: 'testing'})}def\`;{a();}",
+    output: "\`abc${ JSON.stringify({\n" +
+        "  clas: 'testing'\n" +
+        "}) }def`;\n" +
+        "{\n" +
+        "  a();\n" +
+        "}\n",
   },
 
   {
