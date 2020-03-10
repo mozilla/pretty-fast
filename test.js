@@ -671,6 +671,13 @@ var testCases = [
     name: "Bug pretty-sure-9 - accept unary operator at start of file",
     input: "+ 0",
     output: "+ 0\n"
+  },
+  {
+    name: "Stack-keyword property access",
+    input: "foo.a=1.1;foo.do.switch.case.default=2.2;foo.b=3.3;\n",
+    output: "foo.a = 1.1;\n" +
+            "foo.do.switch.case.default = 2.2;\n" +
+            "foo.b = 3.3;\n"
   }
 ];
 
