@@ -12,13 +12,15 @@
   "main": "pretty-fast.js",
   "scripts": {
     "eslint": "eslint -f compact *.js",
-    "test": "npm run eslint && node test.js"
+    "test": "jest"
   },
   "bin": {
     "pretty-fast": "./bin/pretty-fast"
   },
   "devDependencies": {
-    "eslint": "6.6.0"
+    "chalk": "^3.0.0",
+    "eslint": "6.6.0",
+    "jest": "^25.1.0"
   },
   "dependencies": {
     "source-map": "^0.5.7",
