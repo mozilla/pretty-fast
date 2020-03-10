@@ -18,7 +18,7 @@
     "pretty-fast": "./bin/pretty-fast"
   },
   "devDependencies": {
-    "eslint": "0.6.2"
+    "eslint": "6.6.0"
   },
   "dependencies": {
     "source-map": "^0.5.7",
