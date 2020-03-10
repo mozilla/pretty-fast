@@ -325,6 +325,9 @@
       if (ltt == ";") {
         return true;
       }
+      if (ltt == "${") {
+        return true;
+      }
       if (ltt == "num" && token.type.label == ".") {
         return true;
       }
@@ -436,7 +439,9 @@
                  ttl != ";" &&
                  ttl != "," &&
                  ttl != ")" &&
-                 ttl != ".") {
+                 ttl != "." &&
+                 ttl != "template" &&
+                 ttl != "`") {
         write("\n",
               lastToken.loc.start.line,
               lastToken.loc.start.column);
@@ -444,7 +449,7 @@
       }
     }
 
-    if (ttl == ":" && stack[stack.length - 1] == "?") {
+    if ((ttl == ":" && stack[stack.length - 1] == "?") || (ttl == "}" && stack[stack.length - 1] == "${")) {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
@@ -591,6 +596,7 @@
       || ttl == "("
       || ttl == "["
       || ttl == "?"
+      || ttl == "${"
       || ttk == "do"
       || ttk == "switch"
       || ttk == "case"
@@ -616,7 +622,7 @@
    * indent level.
    */
   function decrementsIndent(tokenType, stack) {
-    return tokenType == "}"
+    return (tokenType == "}" && stack[stack.length - 1] != "${")
       || (tokenType == "]" && stack[stack.length - 1] == "[\n");
   }
 
