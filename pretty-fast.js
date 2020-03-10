@@ -333,7 +333,8 @@
       }
 
       var ltk = lastToken.type.keyword;
-      if (ltk != null) {
+      var ttl = token.type.label;
+      if (ltk != null && ttl != ".") {
         if (ltk == "break" || ltk == "continue" || ltk == "return") {
           return token.type.label != ";";
         }
@@ -352,14 +353,6 @@
                          && token.type.label != ";"
                          && token.type.label != ","
                          && token.type.label != ".")) {
-        return true;
-      }
-
-      if (lastToken.value == "let") {
-        return true;
-      }
-
-      if (lastToken.value == "const") {
         return true;
       }
 
@@ -456,7 +449,7 @@
       spaceAdded = true;
     }
 
-    if (lastToken && ltt != "}" && ttk == "else") {
+    if (lastToken && ltt != "}" && ltt != "." && ttk == "else") {
       write(" ",
             lastToken.loc.start.line,
             lastToken.loc.start.column);
