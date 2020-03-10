@@ -678,6 +678,16 @@ var testCases = [
     output: "foo.a = 1.1;\n" +
             "foo.do.switch.case.default = 2.2;\n" +
             "foo.b = 3.3;\n"
+  },
+  {
+    name: "Dot handling with let which is identifier name",
+    input: "y.let.let = 1.23;\n",
+    output: "y.let.let = 1.23;\n"
+  },
+  {
+    name: "Dot handling with keywords which are identifier name",
+    input: "y.await.break.const.delete.else.return.new.yield = 1.23;\n",
+    output: "y.await.break.const.delete.else.return.new.yield = 1.23;\n"
   }
 ];
 
