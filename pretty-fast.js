@@ -847,6 +847,7 @@
 
       if (ttk && lastToken && lastToken.type.label == ".") {
         token.type = acorn.tokTypes.name;
+        ttk = token.type.keyword;
       }
 
       ttl = token.type.label;
