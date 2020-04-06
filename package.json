@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "source-map": "^0.5.7",
-    "acorn": "~5.2.1",
+    "acorn": "~5.7.4",
     "optimist": "~0.6.0"
   }
 }
