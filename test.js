@@ -354,7 +354,7 @@ const cases = [
 const sourceMap = this.sourceMap || require("source-map");
 const includesOnly = cases.find(({only}) => only);
 
-let output = ``
+let output = ""
 
 for (const {name, input, only, skip} of cases) {
   if (includesOnly && !only || skip) {
