@@ -806,6 +806,7 @@
     var tokens = acorn.tokenizer(input, {
       locations: true,
       sourceFile: options.url,
+      ecmaVersion: options.ecmaVersion || "latest",
       onComment: function (block, text, start, end, startLoc, endLoc) {
         tokenQueue.push({
           type: {},
