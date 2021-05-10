@@ -804,6 +804,17 @@ Array [
 ]
 `;
 
+exports[`Optional chaining parsing support 1`] = `
+"x?.y?.z?.['a']?.check();
+"
+`;
+
+exports[`Optional chaining parsing support 2`] = `
+Array [
+  "(1, 0) -> (1, 0)",
+]
+`;
+
 exports[`Regexp 1`] = `
 "var r = /foobar/g;
 "
