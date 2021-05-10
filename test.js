@@ -348,6 +348,24 @@ const cases = [
   {
     name: "Dot handling with keywords which are identifier name",
     input: "y.await.break.const.delete.else.return.new.yield = 1.23;\n",
+  },
+  {
+    name: "Optional chaining parsing support",
+    input: "x?.y?.z?.['a']?.check();\n",
+  },
+  {
+    name: "Private fields parsing support",
+    input: `
+      class MyClass {
+        constructor(a) {
+          this.#a = a;
+        }
+        #a
+        #getA() {
+          return this.#a;
+        }
+      }
+    `,
   }
 ];
 

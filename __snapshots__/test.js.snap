@@ -804,6 +804,44 @@ Array [
 ]
 `;
 
+exports[`Optional chaining parsing support 1`] = `
+"x?.y?.z?.['a']?.check();
+"
+`;
+
+exports[`Optional chaining parsing support 2`] = `
+Array [
+  "(1, 0) -> (1, 0)",
+]
+`;
+
+exports[`Private fields parsing support 1`] = `
+"class MyClass {
+  constructor(a) {
+    this.a = a;
+  }
+  a
+  getA() {
+    return this.a;
+  }
+}
+"
+`;
+
+exports[`Private fields parsing support 2`] = `
+Array [
+  "(2, 6) -> (1, 0)",
+  "(3, 8) -> (2, 0)",
+  "(4, 10) -> (3, 0)",
+  "(5, 8) -> (4, 0)",
+  "(6, 8) -> (5, 0)",
+  "(7, 8) -> (6, 0)",
+  "(8, 10) -> (7, 0)",
+  "(9, 8) -> (8, 0)",
+  "(10, 6) -> (9, 0)",
+]
+`;
+
 exports[`Regexp 1`] = `
 "var r = /foobar/g;
 "

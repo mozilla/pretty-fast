@@ -42,6 +42,9 @@ instances, and source maps in general.)
 * `indent` - The string that you want your code indented by. Most people want
   one of `"  "`, `"    "`, or `"\t"`.
 
+* `ecmaVersion` - Indicates the ECMAScript version to parse. 
+   See acorn.parse documentation for more details. Defaults to `"latest"`.
+
 ## Issues
 
 [Please use Bugzilla](https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Developer%20Tools%3A%20Debugger)
