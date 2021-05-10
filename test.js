@@ -358,11 +358,17 @@ const cases = [
     input: `
       class MyClass {
         constructor(a) {
-          this.#a = a;
+          this.#a = a;this.#b = Math.random();this.ab = this.#getAB();
         }
         #a
+        #b = "default value"
+        static #someStaticPrivate
         #getA() {
           return this.#a;
+        }
+        #getAB() {
+          return this.#getA()+this.
+            #b
         }
       }
     `,
