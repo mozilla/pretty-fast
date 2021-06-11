@@ -17,7 +17,7 @@
 }(this, function () {
   "use strict";
 
-  var acorn = this.acorn || require("acorn/dist/acorn");
+  var acorn = this.acorn || require("acorn");
   var sourceMap = this.sourceMap || require("source-map");
   var SourceNode = sourceMap.SourceNode;
 
